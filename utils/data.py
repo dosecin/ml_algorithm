@@ -14,10 +14,9 @@ def read_mnist_train_images_idx3(path: str):
     image_size = num_rows*num_cols
     offset += struct.calcsize(fmt_header)
     fmt_image = '>'+str(image_size)+'B'
-    images: np.ndarray = np.empty((num_image, num_rows, num_cols))
+    images: np.ndarray = np.empty((num_image, num_rows * num_cols))
     for i in range(num_image):
-        images[i] = np.array(struct.unpack_from(
-            fmt_image, bin_data, offset)).reshape((num_rows, num_cols))
+        images[i] = np.array(struct.unpack_from(fmt_image, bin_data, offset))
         offset += struct.calcsize(fmt_image)
     return images.astype(int)
 
@@ -40,4 +39,8 @@ def read_mnist_train_labels_idx1(path: str):
 
 def read_mnist_train(root_dir: str):
     return (read_mnist_train_images_idx3(os.path.join(root_dir, 'data/train-images.idx3-ubyte')),
-            read_mnist_train_labels_idx1(os.path.join(root_dir, 'data/train-labels.idx1-ubyte')))
+            read_mnist_train_labels_idx1(os.path.join(
+                root_dir, 'data/train-labels.idx1-ubyte')),
+            read_mnist_train_images_idx3(os.path.join(
+                root_dir, 'data/t10k-images.idx3-ubyte')),
+            read_mnist_train_labels_idx1(os.path.join(root_dir, 'data/t10k-labels.idx1-ubyte')))
