@@ -1,6 +1,6 @@
 import struct
 import numpy as np
-import os.path
+import os
 
 
 def read_mnist_train_images_idx3(path: str):
@@ -37,10 +37,23 @@ def read_mnist_train_labels_idx1(path: str):
     return labels.astype(int)
 
 
-def read_mnist_train(root_dir: str):
+def read_mnist(root_dir: str):
     return (read_mnist_train_images_idx3(os.path.join(root_dir, 'data/train-images.idx3-ubyte')),
             read_mnist_train_labels_idx1(os.path.join(
                 root_dir, 'data/train-labels.idx1-ubyte')),
             read_mnist_train_images_idx3(os.path.join(
                 root_dir, 'data/t10k-images.idx3-ubyte')),
             read_mnist_train_labels_idx1(os.path.join(root_dir, 'data/t10k-labels.idx1-ubyte')))
+
+
+def __reduce_data_01(X, y):
+    w = np.where((y == 0) | (y == 1))
+    X = X[w]
+    y = y[w]
+    y[np.where(y == 0)] = -1
+    return X, y
+
+
+def read_mnist_01():
+    train_X, train_y, test_X, test_y = read_mnist(os.getcwd())
+    return __reduce_data_01(train_X, train_y), __reduce_data_01(test_X, test_y)
